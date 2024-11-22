@@ -1,18 +1,29 @@
-use fake::{faker::lorem::en::Sentences, Fake};
+use std::io;
 
 fn main() {
-    let sentences: Vec<String> = Sentences(5..20).fake();
+    loop {
+        let mut input = String::new();
+        match io::stdin().read_line(&mut input) {
+            Ok(len) => {
+                if len == 0 {
+                    return;
+                }
 
-    let text = sentences.join("; ").replace('\n', "");
+                let words = input.split(' ');
 
-    let words = text.split(' ');
+                for (idx, t) in words.enumerate() {
+                    let (r, g, b) = rgb(idx as i32);
+                    print!("\x1b[38;2;{};{};{}m{} \x1b[0m", r, g, b, t);
+                }
 
-    for (idx, t) in words.enumerate() {
-        let (r, g, b) = rgb(idx as i32);
-        print!("\x1b[38;2;{};{};{}m{} \x1b[0m", r, g, b, t);
+                println!()
+            }
+            Err(error) => {
+                eprintln!("error: {}", error);
+                return;
+            }
+        }
     }
-
-    println!()
 }
 
 fn rgb(i: i32) -> (i32, i32, i32) {
